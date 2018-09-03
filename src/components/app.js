@@ -1,10 +1,12 @@
 // @flow
 import React from 'react';
+import LoadChart from './load-chart';
 
 const App = () => (
   <div>
-    <h1>HELLO</h1>
+    <LoadChart />
   </div>
 );
 
 export default App;
+
