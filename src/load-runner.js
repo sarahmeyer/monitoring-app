@@ -14,6 +14,7 @@ intervalID = setInterval(() => {
 		const fifteenMinuteLoad = parseFloat(tokens[tokens.length - 1], 10);
 		const uptimeRecord = {
 			_id: timestamp.toString(),
+			timestamp,
 			oneMinuteLoad,
 			fiveMinuteLoad,
 			fifteenMinuteLoad,

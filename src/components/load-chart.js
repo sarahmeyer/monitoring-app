@@ -28,13 +28,21 @@ class LoadChart extends React.Component {
 	}
 
 	plotRecordsOnCanvas(records) {
+		if (records.length < 2) {
+			return;
+		}
+
 	    const canvas = this.refs.canvas;
 	    const ctx = canvas.getContext("2d");
 
 	    const canvasWidth = canvas.attributes.width.value;
 	    const canvasHeight = canvas.attributes.height.value;
-		debugger;
 
+		const x = scaleTime()
+		    .domain([new Date(records[0].timestamp), new Date(records[records.length - 1].timestamp)])
+		    .range([0, canvasWidth]);
+
+		console.log(x(canvasWidth / 2));
 	}
 
 	fetchRecords() {
@@ -63,7 +71,9 @@ class LoadChart extends React.Component {
 	}
 
 	componentDidUpdate() {
-		setTimeout(this.fetchRecords, 10000);
+		setTimeout(() => {
+			this.fetchRecords();
+		}, 10000);
 	}
 
 	render() {
