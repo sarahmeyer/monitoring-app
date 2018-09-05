@@ -3,8 +3,8 @@ import moment from 'moment';
 import PouchDB from 'pouchdb';
 import { scaleLinear, scaleTime } from 'd3-scale';
 
-const DEFAULT_WIDTH = 300;
-const DEFAULT_HEIGHT = 200;
+const DEFAULT_WIDTH = 800;
+const DEFAULT_HEIGHT = 640;
 const DEFAULT_MINUTES = 10;
 const TICK_SIZE = 10;
 
@@ -101,6 +101,8 @@ class LoadChart extends React.Component {
 		const ticks = this.yScale().ticks();
 
 		// draw y scale
+		// not done in setupCanvas because we need records
+		// to know our y domain
 		for (const index in ticks) {
 			const tick = ticks[index];
 
@@ -110,6 +112,8 @@ class LoadChart extends React.Component {
 			ctx.moveTo(0, y);
 			ctx.lineTo(0 + TICK_SIZE, y);
 			ctx.stroke();
+			ctx.font = '8px sans-serif';
+			ctx.fillText(tick, TICK_SIZE + 3, y);
 		}
 
 		// plot records
