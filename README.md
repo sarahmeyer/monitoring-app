@@ -30,3 +30,8 @@ Sybil:~ sarahmeyer$ uptime
 
 This application requires Apache CouchDB, which can be downloaded [here](https://couchdb.apache.org/#download). Please follow [all directions](https://pouchdb.com/guides/setup-couchdb.html) for installing PouchDB, built on CouchDB, including CORS installation.
 
+## Database
+
+This application uses Apache CouchDB as its document store. You can access a user interface for your system's CouchDB installation [here](http://127.0.0.1:5984/_utils/#/database/pouchdb__records/_all_docs).
+
+

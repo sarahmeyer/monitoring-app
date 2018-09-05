@@ -3,7 +3,7 @@ const { spawn } = require('child_process');
 
 const db = new PouchDB('http://localhost:5984/pouchdb__records');
 
-intervalID = setInterval(() => {
+setInterval(() => {
 	const uptime = spawn('uptime');
 
 	uptime.stdout.on('data', (data) => {
@@ -27,7 +27,7 @@ intervalID = setInterval(() => {
 		}).catch((err) => {
 			console.log('record insertion error error', err);
 		}).then(function (response) {
-		  console.log(`record length ${response.total_rows}`);
+		  console.log(`response is ${response}`);
 		}).catch(function (err) {
 		  console.log(err);
 		});
