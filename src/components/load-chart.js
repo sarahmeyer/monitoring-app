@@ -84,6 +84,12 @@ class LoadChart extends React.Component {
 			ctx.moveTo(x, canvasHeight);
 			ctx.lineTo(x, canvasHeight - TICK_SIZE);
 			ctx.stroke();
+
+			const tickDisplayTime = moment(this.xScale().invert(x))
+				.format('hh:mm:ss a');
+
+			ctx.font = '8px sans-serif';
+			ctx.fillText(tickDisplayTime, x, canvasHeight - TICK_SIZE - 3);
 		}
 	}
 
