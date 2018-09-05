@@ -2,11 +2,11 @@ import * as React from 'react';
 import moment from 'moment';
 import PouchDB from 'pouchdb';
 import { scaleLinear, scaleTime } from 'd3-scale';
-import { sortBy } from 'underscore';
 
 const DEFAULT_WIDTH = 300;
 const DEFAULT_HEIGHT = 200;
 const DEFAULT_MINUTES = 10;
+const TICK_SIZE = 10;
 
 class LoadChart extends React.Component {
 	constructor(props) {
@@ -70,6 +70,9 @@ class LoadChart extends React.Component {
 	    const canvasWidth = canvas.attributes.width.value;
 	    const canvasHeight = canvas.attributes.height.value;
 
+	    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+		ctx.strokeStyle = 'black';
 		ctx.beginPath();
 		ctx.moveTo(0, canvasHeight);
 		ctx.lineTo(canvasWidth, canvasHeight);
@@ -79,12 +82,13 @@ class LoadChart extends React.Component {
 			const barWidth = DEFAULT_WIDTH / DEFAULT_MINUTES;
 			const x = (i * barWidth) + (barWidth / 2);
 			ctx.moveTo(x, canvasHeight);
-			ctx.lineTo(x, canvasHeight - 10);
+			ctx.lineTo(x, canvasHeight - TICK_SIZE);
 			ctx.stroke();
 		}
 	}
 
-	plotRecordsOnCanvas(records) {
+	plotRecordsOnCanvas() {
+		const { records } = this.state;
 		if (records.length < 2) {
 			return;
 		}
@@ -94,6 +98,21 @@ class LoadChart extends React.Component {
 
 		const recordsInTimeframe = this.recordsInTimeframe();
 
+		const ticks = this.yScale().ticks();
+
+		// draw y scale
+		for (const index in ticks) {
+			const tick = ticks[index];
+
+			const y = this.yScale()(tick);
+
+			ctx.strokeStyle = 'black';
+			ctx.moveTo(0, y);
+			ctx.lineTo(0 + TICK_SIZE, y);
+			ctx.stroke();
+		}
+
+		// plot records
 		for (const index in recordsInTimeframe) {
 			const doc = recordsInTimeframe[index].doc;
 
@@ -102,25 +121,30 @@ class LoadChart extends React.Component {
 			const y2 = this.yScale()(moment.utc(doc.fiveMinuteLoad));
 			const y3 = this.yScale()(moment.utc(doc.fifteenMinuteLoad));
 
-			console.log('oneMinuteLoad', doc.oneMinuteLoad, y1,
-				'fiveMinuteLoad', doc.fiveMinuteLoad, y2,
-				'fifteenMinuteLoad', doc.fifteenMinuteLoad, y3);
+			// console.log('oneMinuteLoad', doc.oneMinuteLoad, y1,
+			// 	'fiveMinuteLoad', doc.fiveMinuteLoad, y2,
+			// 	'fifteenMinuteLoad', doc.fifteenMinuteLoad, y3);
 
 			ctx.beginPath();
-			ctx.fillStyle = 'blue';
+			ctx.strokeStyle = 'blue';
 			ctx.arc(x, y1, 2, 0, Math.PI * 2, false)
 			ctx.stroke();
 
 			ctx.beginPath();
-			ctx.fillStyle = 'red';
+			ctx.strokeStyle = 'red';
 			ctx.arc(x, y2, 2, 0, Math.PI * 2, false)
 			ctx.stroke();
 
 			ctx.beginPath();
-			ctx.fillStyle = 'green';
+			ctx.strokeStyle = 'green';
 			ctx.arc(x, y3, 2, 0, Math.PI * 2, false)
 			ctx.stroke();
 		}
+	}
+
+	draw() {
+		this.setupCanvas();
+		this.plotRecordsOnCanvas();
 	}
 
 	fetchRecords() {
@@ -134,7 +158,7 @@ class LoadChart extends React.Component {
 				this.setState({
 					records: result.rows,
 				}, () => {
-					this.plotRecordsOnCanvas(result.rows);
+					this.draw();
 				});
 			}
 		}).catch((err) => {
@@ -144,8 +168,6 @@ class LoadChart extends React.Component {
 
 	componentDidMount() {
 		this.fetchRecords();
-
-		this.setupCanvas();
 	}
 
 	componentDidUpdate() {
