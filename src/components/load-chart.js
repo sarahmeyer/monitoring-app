@@ -7,6 +7,20 @@ const DEFAULT_WIDTH = 800;
 const DEFAULT_HEIGHT = 640;
 const DEFAULT_MINUTES = 10;
 const TICK_SIZE = 10;
+const META_KEY = {
+	oneMinuteLoad: {
+		label: 'One minute load average',
+		color: 'blue',
+	},
+	fiveMinuteLoad: {
+		label: 'Five minute load average',
+		color: 'red',
+	},
+	fifteenMinuteLoad: {
+		label: 'Fifteen minute load average',
+		color: 'green',
+	}
+}
 
 class LoadChart extends React.Component {
 	constructor(props) {
@@ -112,7 +126,7 @@ class LoadChart extends React.Component {
 		for (const index in ticks) {
 			const tick = ticks[index];
 
-			const y = this.yScale()(tick);
+			const y = DEFAULT_HEIGHT - this.yScale()(tick);
 
 			ctx.strokeStyle = 'black';
 			ctx.moveTo(0, y);
@@ -127,28 +141,15 @@ class LoadChart extends React.Component {
 			const doc = recordsInTimeframe[index].doc;
 
 			const x = this.xScale()(moment.utc(doc.timestamp));
-			const y1 = this.yScale()(moment.utc(doc.oneMinuteLoad));
-			const y2 = this.yScale()(moment.utc(doc.fiveMinuteLoad));
-			const y3 = this.yScale()(moment.utc(doc.fifteenMinuteLoad));
 
-			// console.log('oneMinuteLoad', doc.oneMinuteLoad, y1,
-			// 	'fiveMinuteLoad', doc.fiveMinuteLoad, y2,
-			// 	'fifteenMinuteLoad', doc.fifteenMinuteLoad, y3);
+			for (const key in META_KEY) {
+				const y = DEFAULT_HEIGHT - this.yScale()(moment.utc(doc[key]));
 
-			ctx.beginPath();
-			ctx.strokeStyle = 'blue';
-			ctx.arc(x, y1, 2, 0, Math.PI * 2, false)
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.strokeStyle = 'red';
-			ctx.arc(x, y2, 2, 0, Math.PI * 2, false)
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.strokeStyle = 'green';
-			ctx.arc(x, y3, 2, 0, Math.PI * 2, false)
-			ctx.stroke();
+				ctx.beginPath();
+				ctx.strokeStyle = META_KEY[key].color;
+				ctx.arc(x, y, 2, 0, Math.PI * 2, false)
+				ctx.stroke();
+			}
 		}
 	}
 
@@ -190,6 +191,31 @@ class LoadChart extends React.Component {
 		return (
 			<div>
 				<canvas ref="canvas" width={DEFAULT_WIDTH} height={DEFAULT_HEIGHT} />
+				<div>
+					<ul>
+						{
+							Object.keys(META_KEY).map((key) => {
+								const meta = META_KEY[key];
+
+								return (
+									<li key={key} style={{listStyle: 'none'}}>
+										<span style={{
+											background: meta.color,
+											display: 'inline-block',
+											height: 10,
+											width: 10,
+											marginRight: 10,
+										}} >
+										</span>
+										<span>
+											{ meta.label }
+										</span>
+									</li>
+								);
+							})
+						}
+					</ul>
+				</div>
 			</div>
 		);
 	}
