@@ -30,8 +30,22 @@ Sybil:~ sarahmeyer$ uptime
 
 This application requires Apache CouchDB, which can be downloaded [here](https://couchdb.apache.org/#download). Please follow [all directions](https://pouchdb.com/guides/setup-couchdb.html) for installing PouchDB, built on CouchDB, including CORS installation.
 
-## Database
+This application also requires `node` and `npm`.
 
-This application uses Apache CouchDB as its document store. You can access a user interface for your system's CouchDB installation [here](http://127.0.0.1:5984/_utils/#/database/pouchdb__records/_all_docs).
+All other application requirements can be installed by running.
+```
+npm install
+```
+After all requirements have been installed, the script that monitors and records system performance can be run here:
+```
+npm run load-runner
+```
+WARNING: without running this script, the application will not have any data to use!
+
+Once the `load-runner` script is running, the application can be locally built and run with the command:
+```
+npm run start
+```
+At this point, the application can be viewed at `localhost:3000`.
 
 
